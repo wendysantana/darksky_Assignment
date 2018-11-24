@@ -41,6 +41,10 @@ public class BasePage {
 		return text;
 	}
 
+	public void clearText(By locator) {
+		SharedSD.getDriver().findElement(locator).clear();
+	}
+
 	public void clickOnBrowserBackArrow() {
 		SharedSD.getDriver().navigate().back();
 	}
