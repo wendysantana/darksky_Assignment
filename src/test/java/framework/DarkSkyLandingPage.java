@@ -25,6 +25,7 @@ public class DarkSkyLandingPage extends BasePage {
     private By twentyHourIncrement = By.xpath("//div[@id='timeline']//div[@class='hours']//span[21]");
     private By twentytwoHourIncrement = By.xpath("//div[@id='timeline']//div[@class='hours']//span[23]");
 
+    private By expandTimeline = By.xpath("");
     private By currentTemp = By.xpath("//span[@class='summary swap']");
     private By lowTemp = By.xpath("//span[@class='currently']//span[2]//span[2]//span[2]");
     private By highTemp = By.xpath("//span[@class='summary-high-low']//span[3]");
@@ -104,11 +105,14 @@ public class DarkSkyLandingPage extends BasePage {
         String hiTempInt = hTemp.replaceAll("[^0-9]", "");
         int ht = Integer.parseInt(hiTempInt);
 
+        System.out.println("Current temp: " + ct + " Low temp: " + lt + " High temp: " + ht);
+
         Assert.assertTrue("Current temp is between low and high temps", lt <= ct && ct <= ht);
 
     }
-
-
 }
+
+
+
 
 
