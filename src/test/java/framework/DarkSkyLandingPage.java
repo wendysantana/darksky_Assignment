@@ -13,6 +13,8 @@ import java.util.Date;
 public class DarkSkyLandingPage extends BasePage {
 
 //   private String twoIncrement = "//div[@id='timeline']//div[@class='hours']//span[3]";
+    /** You may create some custom xpath to get all webelement, may be using descendant.
+    */
     private By twoHourIncrement = By.xpath("//div[@id='timeline']//div[@class='hours']//span[3]");
     private By fourHourIncrement = By.xpath("//div[@id='timeline']//div[@class='hours']//span[5]");
     private By sixHourIncrement = By.xpath("//div[@id='timeline']//div[@class='hours']//span[7]");
@@ -26,6 +28,10 @@ public class DarkSkyLandingPage extends BasePage {
     private By twentytwoHourIncrement = By.xpath("//div[@id='timeline']//div[@class='hours']//span[23]");
 
     private By expandTimelineButton = By.xpath("//div[@id='week']//a[1]//span[2]//span[2]");
+    
+    /** These long CSS locators are not reliable, if they change any CSS property, it may break
+    */
+    
     private By lowTemp = By.cssSelector("body.forecast:nth-child(2) div.center:nth-child(7) a.day.revealed:nth-child(2) span.tempRange:nth-child(2) > span.minTemp");
     private By highTemp = By.cssSelector("body.forecast:nth-child(2) div.center:nth-child(7) a.day.revealed:nth-child(2) span.tempRange:nth-child(2) > span.maxTemp");
     private By lowExpandTemp = By.cssSelector("body.forecast:nth-child(2) div.center:nth-child(7) div.dayDetails.revealed:nth-child(3) div.summary_container div.dayExtras div.highLowTemp.swip span.highTemp.swip > span.temp");
