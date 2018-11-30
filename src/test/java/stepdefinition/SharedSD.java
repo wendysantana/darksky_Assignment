@@ -28,7 +28,7 @@ public class SharedSD {
 	public static void after() {
 		if (driver != null) {
 			driver.manage().deleteAllCookies();
-			driver.quit();
+		//	driver.quit();
 		}
 	}
 
