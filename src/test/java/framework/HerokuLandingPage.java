@@ -1,19 +1,25 @@
 package framework;
 
-import framework.BasePage;
+import com.github.javafaker.Faker;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import ru.yandex.qatools.allure.annotations.Step;
 import stepdefinition.SharedSD;
-import sun.security.util.PendingException;
 
-import javax.xml.bind.Element;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class HerokuLandingPage extends BasePage {
 
     private By searchBar = By.xpath("//input[@id='aa-search-input']");
-    private By searchArea = By.id("aa-search-input");
+    private By searchArea = By.cssSelector("#option-24838991");
+
+    private By allPosts = By.xpath("//div[@class='container section']//parent::div");
+    private By postImages = By.xpath("//div[@class='row']//div[1]//descendant::a");
+    private By postPrice = By.xpath("//div[@class='row']//div[//div[@class='row']//div[1]//descendant::a]//div[1]//h3[1]");
 
     private By joinButton = By.xpath("//a[@class='btn btn-success']");
     private By registrationName = By.xpath("//input[@name='username']");
@@ -29,29 +35,53 @@ public class HerokuLandingPage extends BasePage {
     private By iconButton = By.cssSelector("nav.navbar.navbar-default.navbar-static-top:nth-child(1) div.container div.collapse.navbar-collapse ul.nav.navbar-nav.navbar-right li.dropdown:nth-child(3) > a.dropdown-toggle");
     private By logoutButton = By.cssSelector("nav.navbar.navbar-default.navbar-static-top:nth-child(1) div.container div.collapse.navbar-collapse ul.nav.navbar-nav.navbar-right li.dropdown.open:nth-child(3) ul.dropdown-menu li:nth-child(3) > a:nth-child(1)");
 
-    //Scenario @heroku-search-1 below
+
+    Faker fake = new Faker();
+
+    //Scenario @heroku-search-1 below- just click title and verify title
     @Step
     public void enterSearchText(String enterSearch) {
         clickOn(searchBar);
-        sendText(searchBar, enterSearch); }
+        sendText(searchBar, enterSearch);
+    }
 
     @Step
-    public void verifyTitleSearch (String title){
-       String searchText = getTextFromElement(searchArea);
-       System.out.println("Searched text:" + searchText);
-       Assert.assertEquals(searchText,title);
+    public void verifyTitleSearch(String title) {
+        Actions action = new Actions(SharedSD.getDriver());
+        action.click((SharedSD.getDriver().findElement(searchArea)));
+        String searchText = getTextFromElement(searchArea);
+        System.out.println("Searched text:" + searchText);
+    }
+
+    //Scenario @heroku-search-2 below
+    @Step
+   public void verifyNumberOfPosts(int posts){
+        int boxes = allPosts.toString().length();
+        System.out.println("Textboxes: " + boxes);
+        Assert.assertEquals(boxes,posts); }
+
+    @Step
+    public void verifyPriceTag() {
+        int count =0;
+        List<WebElement> images = SharedSD.getDriver().findElements(postPrice);
+        for (WebElement image:images){
+            if (image.isDisplayed())
+                count++;
+        }
+        System.out.println("Price displayed: " + count);
+    }
 
 
-//    public void verifyTitle(String text) throws InterruptedException {
-////      String text = selectDropDownGetText(searchBar, searchIndex);
-////      System.out.println(text);
-//        clickOn(searchArea);
-//        Thread.sleep(1000);
-//        hoverOver(searchArea);
-//        Thread.sleep(1000);
-//        String alertText = getAlert();
-//        Assert.assertTrue(alertText.contains(text));
-//
+    @Step
+    public void verifyImageDisplayed(){
+        int count =0;
+        List<WebElement> images = SharedSD.getDriver().findElements(postImages);
+        for (WebElement image:images){
+            if (image.isDisplayed())
+                count++;
+        }
+        System.out.println("Images displayed: " + count);
+
     }
 
 
@@ -74,13 +104,36 @@ public class HerokuLandingPage extends BasePage {
         clickOn(submitregistrationButton); }
 
     @Step
-    public void verifyInvalidEmail(String text)throws InterruptedException{
+    public void verifyInvalidEmail()throws InterruptedException{
         clickOn(submitregistrationButton);
         Thread.sleep(1000);
         hoverOver(registrationSubmitBox);
         Thread.sleep(1000);
         String alertText = getAlert();
-        Assert.assertTrue(alertText.contains(text));
+        Assert.assertFalse(alertText.isEmpty()); }
+
+
+    //Scenario @heroku-search-4 below
+    @Step
+    public void enterCredentials(String registerName, String registerPassword) {
+        String email =fake.internet().emailAddress();
+        System.out.println("Email: " + email);
+
+        clickOn(registrationName);
+        sendText(registrationName, registerName);
+        clickOn(registrationEmail);
+        sendText(registrationEmail,email);
+        clickOn(registrationPassword);
+        sendText(registrationPassword, registerPassword); }
+
+    @Step
+    public void verifyNewUserRegister(){
+        clickOn(iconButton);
+
+        String textLogout = getTextFromElement(logoutButton);
+        System.out.println("Text: " + textLogout);
+
+        Assert.assertEquals(textLogout, "Logout");
     }
 
 

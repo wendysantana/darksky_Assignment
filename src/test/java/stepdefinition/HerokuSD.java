@@ -1,5 +1,6 @@
 package stepdefinition;
 
+import cucumber.api.java.cs.A;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -17,14 +18,23 @@ public class HerokuSD {
 
     @Then("^I verify (.+) as displayed result$")
     public void verifyResult (String title){ landingPage.verifyTitleSearch(title);}
-//  (String text)throws InterruptedException{landingPage.verifyTitle(text);}
-    
+
+    //Scenario @heroku-search-2 below
+    @Then("^I verify (.+) total post is displayed$")public void verifyPosts(int posts){landingPage.verifyNumberOfPosts(posts);}
+
+    @And("^I verify all post has price tag$") public void verifyPrice(){landingPage.verifyPriceTag();}
+
+    @And("^I verify all post has title$") public void verifyTitle(){}
+
+    @And("^I verify all post has displayed image$") public void verifyImage(){landingPage.verifyImageDisplayed();}
+
+
 
     //Scenario @heroku-search-3 below
     @Given("^I am on Registration page$")
     public void registerPage (){landingPage.registrationPage();}
 
-    @When("^I enter name as (.+), email as (.+) and password as (.+)$")
+    @When("^I enter name as (.+) email as (.+) and password as (.+)$")
     public void enterRegistration (String registerName, String registerEmail, String registerPassword)
     {landingPage.enterRegistrationInfo(registerName, registerEmail, registerPassword);}
 
@@ -32,8 +42,14 @@ public class HerokuSD {
     public void registerSubmit (){landingPage.clickSubmitRegistration();}
 
     @Then("^I verify invalid email address$")
-    public void verifyEmail(String text)throws InterruptedException{landingPage.verifyInvalidEmail(text);}
+    public void verifyEmail()throws InterruptedException{landingPage.verifyInvalidEmail();}
 
+
+    //Scenario @heroku-search-4 below
+    @When("^I enter name as (.+) email as random email password as (.+) for new user$")
+    public void enterInformation(String registerName, String registerPassword){landingPage.enterCredentials(registerName,registerPassword);}
+
+    @Then("^I am signed-in as a new user$") public void verifyNewUser(){landingPage.verifyNewUserRegister();}
 
 
     //Scenario @heroku-search-5 below
