@@ -1,15 +1,22 @@
 package framework;
 
 import com.github.javafaker.Faker;
+import com.sun.tools.internal.ws.wsdl.document.soap.SOAPUse;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import ru.yandex.qatools.allure.annotations.Step;
 import stepdefinition.SharedSD;
+import sun.jvm.hotspot.debugger.posix.elf.ELFException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.testng.Assert.assertEquals;
 
 
 public class HerokuLandingPage extends BasePage {
@@ -17,9 +24,10 @@ public class HerokuLandingPage extends BasePage {
     private By searchBar = By.xpath("//input[@id='aa-search-input']");
     private By searchArea = By.cssSelector("#option-24838991");
 
-    private By allPosts = By.xpath("//div[@class='container section']//parent::div");
-    private By postImages = By.xpath("//div[@class='row']//div[1]//descendant::a");
-    private By postPrice = By.xpath("//div[@class='row']//div[//div[@class='row']//div[1]//descendant::a]//div[1]//h3[1]");
+    private By allPosts = By.xpath("//body/div[@class='container section']/div[@class='row']/div[//descendant::a]");
+    private By postImages = By.xpath("//div[@class='container section']//img");
+    private By postPrice = By.xpath("//div[@class='gig-card']//h3[1]");
+    private By postTitle = By.xpath("//div[@class='container section']//h4");
 
     private By joinButton = By.xpath("//a[@class='btn btn-success']");
     private By registrationName = By.xpath("//input[@name='username']");
@@ -55,32 +63,79 @@ public class HerokuLandingPage extends BasePage {
 
     //Scenario @heroku-search-2 below
     @Step
-   public void verifyNumberOfPosts(int posts){
-        int boxes = allPosts.toString().length();
-        System.out.println("Textboxes: " + boxes);
-        Assert.assertEquals(boxes,posts); }
-
-    @Step
-    public void verifyPriceTag() {
-        int count =0;
-        List<WebElement> images = SharedSD.getDriver().findElements(postPrice);
-        for (WebElement image:images){
-            if (image.isDisplayed())
+    public void verifyNumberOfPosts(int posts) {
+        int count = 0;
+        List<WebElement> boxPosts = SharedSD.getDriver().findElements(allPosts);
+        for (WebElement boxPost : boxPosts) {
+            if (boxPost.isDisplayed())
                 count++;
         }
-        System.out.println("Price displayed: " + count);
+        System.out.println("Number of posts displayed: " + count);
+        Assert.assertTrue(count == posts);
     }
 
+    @Step
+    public void verifyPriceTag(int tagPricesPosted) {
+
+            List<WebElement> priceTags = getListOfWebElements(postPrice);
+            int tagsWithPrice = 0;
+            int tagsWithoutPrice = 0;
+
+            for (WebElement price : priceTags) {
+
+                if (price.getText().length() > 2){
+                    tagsWithPrice++;
+                } else {
+                    if (price.getText().length() <= 2)
+                        tagsWithoutPrice++;
+                }
+            }
+                System.out.println("Tags with price: " + tagsWithPrice);
+                System.out.println("Tags without price: " + tagsWithoutPrice);
+                System.out.println("Total tags: " + priceTags.size());
+
+           //     Assert.assertTrue(tagsWithPrice+tagsWithoutPrice==priceTags.size());
+                Assert.assertTrue(tagsWithPrice == tagPricesPosted);
+        }
 
     @Step
-    public void verifyImageDisplayed(){
-        int count =0;
-        List<WebElement> images = SharedSD.getDriver().findElements(postImages);
+    public void verifyTitles(int titlesPosted){
+        int postWithoutTitles=0;
+        int postWithTitles =0;
+
+        List <WebElement> titles = getListOfWebElements(postTitle);
+        for (WebElement title : titles){
+            if (title.getText().isEmpty())
+            postWithoutTitles++;
+             else if (title.getText().length() >=1)
+                postWithTitles++; }
+
+        System.out.println("Post without titles: " + postWithoutTitles);
+        System.out.println("Post with titles: " + postWithTitles);
+        System.out.println("Total posts: " + titles.size());
+
+    //    Assert.assertTrue(postWithoutTitles + postWithTitles == titles.size());
+        Assert.assertTrue(postWithTitles == titlesPosted);
+
+    }
+
+    @Step
+    public void verifyImageDisplayed(int imagesPosted){
+        int imagesDisplayed = 0;
+        int imagesNotDisplayed = 0;
+
+        List<WebElement> images = getListOfWebElements(postImages);
         for (WebElement image:images){
             if (image.isDisplayed())
-                count++;
+                imagesDisplayed++;
+            else if (image.getText().isEmpty())
+                imagesNotDisplayed++;
         }
-        System.out.println("Images displayed: " + count);
+        System.out.println("Tags with images: " + imagesDisplayed);
+        System.out.println("Tags without images: " + imagesNotDisplayed);
+        System.out.println("Total of images: " + images.size());
+    //    Assert.assertTrue(imagesDisplayed + imagesNotDisplayed == images.size());
+        Assert.assertTrue(imagesDisplayed == imagesPosted);
 
     }
 
@@ -100,8 +155,7 @@ public class HerokuLandingPage extends BasePage {
     }
 
     @Step
-    public void clickSubmitRegistration() {
-        clickOn(submitregistrationButton); }
+    public void clickSubmitRegistration() { clickOn(submitregistrationButton); }
 
     @Step
     public void verifyInvalidEmail()throws InterruptedException{
@@ -133,15 +187,13 @@ public class HerokuLandingPage extends BasePage {
         String textLogout = getTextFromElement(logoutButton);
         System.out.println("Text: " + textLogout);
 
-        Assert.assertEquals(textLogout, "Logout");
+        assertEquals(textLogout, "Logout");
     }
 
 
     //Scenario @heroku-search-5 below
     @Step
-    public void clickSignInButton() {
-        clickOn(signInButton);
-    }
+    public void clickSignInButton() { clickOn(signInButton); }
 
     @Step
     public void enterUsername(String username, String password) {
@@ -152,9 +204,7 @@ public class HerokuLandingPage extends BasePage {
     }
 
     @Step
-    public void enterSubmit() {
-        clickOn(submitButton);
-    }
+    public void enterSubmit() { clickOn(submitButton); }
 
     @Step
     public void verifyLogoutDisplayed() {
@@ -163,9 +213,7 @@ public class HerokuLandingPage extends BasePage {
         String textLogout = getTextFromElement(logoutButton);
         System.out.println("Text: " + textLogout);
 
-        Assert.assertEquals(textLogout, "Logout");
+        assertEquals(textLogout, "Logout");
 
     }
-
 }
-

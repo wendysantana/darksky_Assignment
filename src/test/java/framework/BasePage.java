@@ -11,6 +11,8 @@ import org.testng.Assert;
 
 import stepdefinition.SharedSD;
 
+import java.util.List;
+
 /**
  * Created by mohammadmuntakim on 6/9/17.
  */
@@ -32,6 +34,10 @@ public class BasePage {
 			Assert.fail("Element is not found with this locator: " + locator.toString());
 			e.printStackTrace();
 		}
+	}
+
+	public List<WebElement> getListOfWebElements(By locator) {
+		return SharedSD.getDriver().findElements(locator);
 	}
 
 	public String getTextFromElement(By locator) {
