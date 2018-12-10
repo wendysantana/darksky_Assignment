@@ -11,10 +11,16 @@ Feature: Heroku Search Feature
 
   @heroku-search-2
     Scenario: Verify total posts displayed
-    Then I verify 56 total post is displayed
-    And I verify all post has price tag
-    And I verify all post has title
-    And  I verify all post has displayed image
+    Then I verify <total> total post is displayed
+    And I verify <total price> post has price tag
+    And I verify <total title> post has title
+    And  I verify <total image> post has displayed image
+
+  Examples:
+  | total | total price | total title | total image |
+  |  94   |      94     |     94      |    94       |
+  |  60   |      80     |     78      |    80       |
+
 
   @heroku-search-3
   Scenario: Verify invalid email on registration

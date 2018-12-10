@@ -22,11 +22,11 @@ public class HerokuSD {
     //Scenario @heroku-search-2 below
     @Then("^I verify (.+) total post is displayed$")public void verifyPosts(int posts){landingPage.verifyNumberOfPosts(posts);}
 
-    @And("^I verify all post has price tag$") public void verifyPrice(){landingPage.verifyPriceTag();}
+    @And("^I verify (.+) post has price tag$") public void verifyPrice(int tagPricesPosted){landingPage.verifyPriceTag(tagPricesPosted);}
 
-    @And("^I verify all post has title$") public void verifyTitle(){}
+    @And("^I verify (.+) post has title$") public void verifyTitle(int titlesPosted){landingPage.verifyTitles(titlesPosted);}
 
-    @And("^I verify all post has displayed image$") public void verifyImage(){landingPage.verifyImageDisplayed();}
+    @And("^I verify (.+) post has displayed image$") public void verifyImage(int imagesPosted){landingPage.verifyImageDisplayed(imagesPosted);}
 
 
 

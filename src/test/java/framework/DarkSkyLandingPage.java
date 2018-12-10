@@ -33,8 +33,6 @@ public class DarkSkyLandingPage extends BasePage {
 
 
 //https://dzone.com/articles/getting-current-date-time-in-java
-//https://stackoverflow.com/questio
-
 
     @Step
     public ArrayList<String> getFutureTimes() {
